@@ -1,24 +1,48 @@
-import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
+import Form from './components/Form';
+import Task from './components/Task';
 
 function App() {
+  const [tasks, setTasks] = useState([]);
+
+  const addTask = (newTask) => {
+  
+    const newTaskWithId = { ...newTask, id: Date.now() }; 
+  
+    setTasks([...tasks, newTaskWithId]);
+  };
+  
+  const onEdit = (editedTask) => {
+    const updatedTasks = [...tasks];
+    const taskIndex = updatedTasks.findIndex((task) => task.id === editedTask.id);
+    if (taskIndex !== -1) {
+      updatedTasks[taskIndex] = { ...updatedTasks[taskIndex], taskname: editedTask.taskname };
+      setTasks(updatedTasks);
+    }
+  };
+
+  const onDelete = (taskToDelete) => {
+    const updatedTasks = [...tasks];
+    const taskIndex = updatedTasks.findIndex((task) => task.id === taskToDelete.id);
+    if (taskIndex !== -1) {
+      updatedTasks.splice(taskIndex, 1);
+      setTasks(updatedTasks);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <div class='flex items-center w-full justify-center h-auto'>
+        <Form addTask={addTask} />
+      </div>
+
+      <div class='flex flex-wrap items-center w-full justify-center h-auto'>
+        {tasks.map((task, index) => (
+          <Task task={task} onEdit={onEdit} onDelete={onDelete} key={index} index={index} />
+        ))}
+      </div>
+    </>
   );
 }
 
